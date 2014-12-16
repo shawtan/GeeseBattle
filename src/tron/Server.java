@@ -15,8 +15,10 @@ import java.net.*;
  * 12/09/2012
  */
 
-public class Server extends JFrame implements GC {
+public class Server extends JFrame{
 
+	final int NUM_PLAYERS = 2;		//Number of players
+	
 	//The location and direction of both players
 	private int dir[] = new int[2];
 	private int locX[] = new int[2];
