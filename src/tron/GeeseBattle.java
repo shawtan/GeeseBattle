@@ -231,7 +231,6 @@ public class GeeseBattle extends JFrame {
 				}
 			}
 		}
-
 	}
 
 
@@ -261,9 +260,7 @@ public class GeeseBattle extends JFrame {
 				//Redraw the grid
 				repaint();
 			}
-
 		}
-
 	}
 
 	class KeyboardPanel extends JPanel {
@@ -350,8 +347,6 @@ public class GeeseBattle extends JFrame {
 				// TODO Auto-generated catch block
 				ex.printStackTrace();
 			}
-
 		}
-
 	}
 }

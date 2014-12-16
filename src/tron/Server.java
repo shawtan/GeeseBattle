@@ -17,7 +17,6 @@ import java.net.*;
 
 public class Server extends JFrame{
 
-	final int NUM_PLAYERS = 2;		//Number of players
 	
 	//The location and direction of both players
 	private int dir[] = new int[2];

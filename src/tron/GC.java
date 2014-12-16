@@ -15,7 +15,6 @@ public interface nGC {
 	
 	//Direction codes
 	
-	final int NUM_PLAYERS = 2;		//Number of players
 	
 	//Game dimensions
 	
