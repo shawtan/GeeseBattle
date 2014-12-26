@@ -22,16 +22,16 @@ public interface GC {
 	final int NUM_PLAYERS = 2;		//Number of players
 	
 	//Game dimensions
-	final int WIDTH = 100;
-	final int HEIGHT = 100;
+	final int GAME_WIDTH = 80;
+	final int GAME_HEIGHT = 60;
 	
-	final int PPI = 4; 		//Pixel density
+	final int PPI = 8; 		//Pixel density
 	final int TICK = 100;	//Timer speed
 	
 	final int PORT = 8002;			//The network port the game uses
 	
 	//Colors for each player, and dead blocks
-	final Color[] color = {Color.BLUE, Color.RED, Color.BLACK};
+	final Color[] color = {Color.BLUE, Color.RED, new Color(0xa95b26)};
 	
 	//Communications announcement codes
 	final int SEND_START = 10;	//Game starting

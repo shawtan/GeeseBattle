@@ -1,6 +1,7 @@
 package tron;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -36,7 +37,7 @@ public class Server extends JFrame implements GC{
 	}
 
 	public Server() {
-
+		System.out.println("constructor");
 		//Create the window
 		this.setSize(500, 300);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -48,9 +49,10 @@ public class Server extends JFrame implements GC{
 		//Initiate the timer
 		timer = new Timer(TICK,new TimerListener());
 		this.setVisible(true);
-
+		System.out.println("presocket");
 		ServerSocket s;
 		try {
+			System.out.println("trying");
 			//Listen at port for connection
 			s = new ServerSocket(PORT);
 			println("Server Started");
@@ -91,15 +93,15 @@ public class Server extends JFrame implements GC{
 		
 		//Start a bit away from side of screen
 		locX[0] = 0+2;
-		locX[1] = GC.WIDTH-3;	
+		locX[1] = GC.GAME_WIDTH-3;	
 		//Start in middle of window
-		locY[0] = GC.HEIGHT /2;
-		locY[1] = GC.HEIGHT /2;
+		locY[0] = GC.GAME_HEIGHT /2;
+		locY[1] = GC.GAME_HEIGHT /2;
 		//Players go in opposite directions
 		dir[0] = EAST;
 		dir[1] = WEST;
 		//Game size
-		grid = new byte[GC.WIDTH][GC.HEIGHT];
+		grid = new byte[GC.GAME_WIDTH][GC.GAME_HEIGHT];
 		
 		//Start timing, begin moving players
 		timer.start();
@@ -184,6 +186,14 @@ public class Server extends JFrame implements GC{
 				} catch (IOException e) {
 					//Connection error
 					println("Player " + (player+1) + " disconnected.");
+					try {
+						input[player].close();
+						output[player].close();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						System.out.println("DC DC-ed?");
+						e1.printStackTrace();
+					}
 					break;
 				}
 			}
@@ -249,7 +259,7 @@ public class Server extends JFrame implements GC{
 				try {
 					output[i].writeInt(SEND_ARR);	//Announce sending game board array
 					//Send the game board
-					for (int j = 0; j < GC.HEIGHT; j++) {
+					for (int j = 0; j < GC.GAME_HEIGHT; j++) {
 						output[i].write(grid[j]);
 					}
 

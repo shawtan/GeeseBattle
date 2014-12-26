@@ -1,5 +1,6 @@
 package tron;
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -11,7 +12,7 @@ import java.net.*;
  * It has graphics
  * 
  * by Shaw Tan
- * 12/09/2012
+ * Dec. 26 2014
  */
 
 
@@ -28,6 +29,9 @@ public class Client extends JFrame implements GC {
 	
 	//Game grid
 	private byte[][] grid;
+	
+	private Image[] goose;
+	private Image bg;
 	
 	private Timer timer;		//A timer for when the server's slow
 	
@@ -72,8 +76,10 @@ public class Client extends JFrame implements GC {
 
 		//Window
 		this.setVisible(true);		
-		this.setSize(PPI*GC.WIDTH,PPI*GC.HEIGHT+this.getInsets().top+pMenu.getHeight());
+		this.setSize(PPI*GC.GAME_WIDTH,PPI*GC.GAME_HEIGHT+this.getInsets().top+pMenu.getHeight());
 
+		timer = new Timer(TICK, new TimerListener());
+		
 		try {
 			//Attempt to connect to server
 			
@@ -103,28 +109,44 @@ public class Client extends JFrame implements GC {
 			e.printStackTrace();
 		}
 
-		timer = new Timer(TICK, new TimerListener());
+		loadImage();
+		
 
 		new Thread(new HandleInput()).start();
-
+		
 	}
 
 	private void newGame(){
 		//Initialize game
 		//(should be the same as what the server has)
 		locX[0] = 0+2;
-		locX[1] = GC.WIDTH-3;
-		locY[0] = GC.HEIGHT /2;
-		locY[1] = GC.HEIGHT /2;
+		locX[1] = GC.GAME_WIDTH-3;
+		locY[0] = GC.GAME_HEIGHT /2;
+		locY[1] = GC.GAME_HEIGHT /2;
 		dir[0] = EAST;
 		dir[1] = WEST;
-		grid = new byte[GC.WIDTH][GC.HEIGHT];
+		grid = new byte[GC.GAME_WIDTH][GC.GAME_HEIGHT];
 		repaint();
 		timer.start();
 		lblStatus.setText("Game started");
 		System.out.println("Starting game");
 	}
+	
+	private void loadImage(){
+		
+		bg = Toolkit.getDefaultToolkit().createImage("rsc/grass.jpg");
+		
+		goose = new Image[6];
+		goose[0] = Toolkit.getDefaultToolkit().createImage("rsc/goose-upL.gif");
+		goose[1] = Toolkit.getDefaultToolkit().createImage("rsc/goose-right.gif");
+		goose[2] = Toolkit.getDefaultToolkit().createImage("rsc/goose-downL.gif");
+		goose[3] = Toolkit.getDefaultToolkit().createImage("rsc/goose-left.gif");
+		goose[4] = Toolkit.getDefaultToolkit().createImage("rsc/goose-upR.gif");
+		goose[5] = Toolkit.getDefaultToolkit().createImage("rsc/goose-downR.gif");
+		
 
+	}
+	
 	void endGame(int player){
 		//Someone lost
 		timer.stop();
@@ -162,8 +184,8 @@ public class Client extends JFrame implements GC {
 						//The game grid is being sent
 //						grid = null;
 						
-						for (int i = 0; i < GC.WIDTH; i++) {
-							byte[] temp = new byte[GC.HEIGHT];
+						for (int i = 0; i < GC.GAME_WIDTH; i++) {
+							byte[] temp = new byte[GC.GAME_HEIGHT];
 							fromServer.readFully(temp);
 							//Copy the game grid
 							grid[i] = temp;
@@ -268,9 +290,13 @@ public class Client extends JFrame implements GC {
 
 		protected void paintComponent(Graphics g){
 			//For drawing the graphics
+
+			if (!timer.isRunning()){
+				return;
+			}
 			
 			//Start on a blank canvas
-			g.clearRect(0, 0, HEIGHT*PPI, WIDTH*PPI);
+			g.drawImage(bg, 0, 0, GAME_WIDTH*PPI, GAME_HEIGHT*PPI, null);
 			
 			try {
 				g.setColor(color[NUM_PLAYERS]);		//The color for dead blocks
@@ -287,6 +313,20 @@ public class Client extends JFrame implements GC {
 				for (int i = 0; i < NUM_PLAYERS; i++) {
 					g.setColor(color[i]);		//The players have different colors
 					g.fillRect(locX[i]*PPI, locY[i]*PPI, PPI, PPI);
+					int d = 0;
+					switch (dir[i]){
+					case NORTH: d = 0;
+						break;
+					case EAST: d = 1;
+						break;
+					case SOUTH: d = 2;
+						break;
+					case WEST: d = 3;
+						break;
+					}
+					
+					g.drawImage(goose[d], locX[i]*PPI-5*PPI, locY[i]*PPI-5*PPI, 10*PPI, 10*PPI, null);
+					
 				}
 				
 			} catch (NullPointerException ex){

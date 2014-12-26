@@ -28,7 +28,7 @@ public class SinglePlayer extends JFrame{
 	}
 	
 	final int gameWidth = 80;
-	final int gameHeight = 80;
+	final int gameHeight = 60;
 
 	final int PPI = 8; 		//Pixel density
 	final int TICK = 100;	//Timer speed
