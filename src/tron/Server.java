@@ -15,7 +15,7 @@ import java.net.*;
  * 12/09/2012
  */
 
-public class Server extends JFrame{
+public class Server extends JFrame implements GC{
 
 	
 	//The location and direction of both players

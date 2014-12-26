@@ -16,6 +16,8 @@ import java.net.*;
 
 
 public class Client extends JFrame implements GC {
+	
+	
 
 	private int SELF;		//Which player this is
 	

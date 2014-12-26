@@ -27,10 +27,10 @@ public class SinglePlayer extends JFrame{
 		NORTH, EAST, SOUTH, WEST
 	}
 	
-	final int WIDTH = 100;
-	final int HEIGHT = 100;
+	final int gameWidth = 80;
+	final int gameHeight = 80;
 
-	final int PPI = 4; 		//Pixel density
+	final int PPI = 8; 		//Pixel density
 	final int TICK = 100;	//Timer speed
 	
 	final static int PORT = 8002;			//The network port the game uses
@@ -38,22 +38,14 @@ public class SinglePlayer extends JFrame{
 	final int NUM_PLAYERS = 2;		//Number of players
 	
 	//Colors for each player, and dead blocks
-	final Color[] color = {Color.BLUE, Color.RED, Color.BLACK};
+	final Color[] color = {Color.BLUE, Color.RED, new Color(0xa95b26)};
 	
 	//Communications announcement codes
 	public static enum Code{
 		SEND_START, SEND_DIR, SEND_ARR, SEND_LOSS, SEND_LOC
 	}
-//	final int SEND_START = 10;	//Game starting
-//	final int SEND_DIR = 11;	//Send new direction
-//	final int SEND_ARR = 12;	//Send board
-//	final int SEND_LOSS = 13;	//A player lost
-//	final int SEND_LOC = 14; 	//Send location
 	
 	private int SELF;		//Which player this is
-	
-	
-	
 	
 //	private byte[][] grid;
 	
@@ -73,10 +65,9 @@ public class SinglePlayer extends JFrame{
 	private boolean[][] grid;
 
 	private Image[] goose;
+	private Image bg;
 	
 	public static void main (String args[]){
-
-		
 		
 		new SinglePlayer();
 
@@ -106,37 +97,41 @@ public class SinglePlayer extends JFrame{
 		timer = new Timer(50, new TimerListener());
 //		timer.start();
 //		
-		locX = WIDTH;
+		locX = gameWidth;
 //		locY = HEIGHT /2;
 //		dir = WEST;
 //		grid = new boolean[WIDTH][HEIGHT];
 
 
 		this.setVisible(true);
-		this.setSize(PPI*WIDTH,PPI*HEIGHT+this.getInsets().top+pMenu.getHeight());
+		this.setSize(PPI*gameWidth,PPI*gameHeight+this.getInsets().top+pMenu.getHeight());
 
 
-		grid = new boolean[WIDTH][HEIGHT];
+		grid = new boolean[gameWidth][gameHeight];
 		loadImage();
 	}
 	
 	private void loadImage(){
 		
-		goose = new Image[4];
-		goose[0] = Toolkit.getDefaultToolkit().createImage("rsc/flying-goose-up.gif");
-		goose[1] = Toolkit.getDefaultToolkit().createImage("rsc/flying-goose-right.gif");
-		goose[2] = Toolkit.getDefaultToolkit().createImage("rsc/flying-goose-down.gif");
-		goose[3] = Toolkit.getDefaultToolkit().createImage("rsc/flying-goose-left.gif");
-
+		bg = Toolkit.getDefaultToolkit().createImage("rsc/grass.jpg");
+		
+		goose = new Image[6];
+		goose[0] = Toolkit.getDefaultToolkit().createImage("rsc/goose-upL.gif");
+		goose[1] = Toolkit.getDefaultToolkit().createImage("rsc/goose-right.gif");
+		goose[2] = Toolkit.getDefaultToolkit().createImage("rsc/goose-downL.gif");
+		goose[3] = Toolkit.getDefaultToolkit().createImage("rsc/goose-left.gif");
+		goose[4] = Toolkit.getDefaultToolkit().createImage("rsc/goose-upR.gif");
+		goose[5] = Toolkit.getDefaultToolkit().createImage("rsc/goose-downR.gif");
+		
 
 	}
 	
 	
 	private void newGame(){
-		locX = WIDTH-3;
-		locY = HEIGHT /2;
+		locX = gameWidth-3;
+		locY = gameHeight /2;
 		dir = Direction.WEST;
-		grid = new boolean[WIDTH][HEIGHT];
+		grid = new boolean[gameWidth][gameHeight];
 		timer.start();
 		repaint();
 	}
@@ -160,6 +155,7 @@ public class SinglePlayer extends JFrame{
 			if (grid[locX][locY]){
 				timer.stop();
 				System.out.println("Dead (Hit self)");
+				JOptionPane.showMessageDialog(null, "You died!");
 			} else {
 				grid[locX][locY]=true;
 				kp.callPaint();
@@ -168,6 +164,7 @@ public class SinglePlayer extends JFrame{
 				//Dead
 				timer.stop();
 				System.out.println("Dead (Out of bounds)");
+				JOptionPane.showMessageDialog(null, "You died!");
 				
 			}
 			
@@ -193,6 +190,10 @@ public class SinglePlayer extends JFrame{
 					case KeyEvent.VK_RIGHT: 
 						dir = Direction.EAST;
 						break;
+					case KeyEvent.VK_SPACE:
+						if (!timer.isRunning()){
+							newGame();
+						}
 					default:
 						System.out.println("Invalid key");
 						return;
@@ -207,6 +208,8 @@ public class SinglePlayer extends JFrame{
 				return;
 			}
 			
+			g.drawImage(bg, 0, 0, gameWidth*PPI, gameHeight*PPI, null);
+			
 			g.setColor(color[2]);
 			for (int i = 0; i < grid.length; i++) {
 				for (int j = 0; j < grid[0].length; j++) {
@@ -219,27 +222,19 @@ public class SinglePlayer extends JFrame{
 			g.setColor(color[0]);
 			g.fillRect(locX*PPI, locY*PPI, PPI, PPI);
 			
-			int direction=0;
+			int d = 0;
 			switch (dir){
-			case NORTH: direction = 0;
+			case NORTH: d = 0;
 				break;
-			case EAST: direction = 1;
+			case EAST: d = 1;
 				break;
-			case SOUTH: direction = 2;
+			case SOUTH: d = 2;
 				break;
-			case WEST: direction = 3;
+			case WEST: d = 3;
 				break;
 			}
 			
-            Graphics2D g2d = (Graphics2D) g.create();
-            AffineTransform at = new AffineTransform();
-            at.setToRotation(Math.PI/2*direction, locX*PPI, locY*PPI);
-//            g2d.setTransform(at);
-//            g2d.rotate(Math.PI/2);
-            g2d.drawImage(goose[direction], at, null);
-            g2d.dispose();
-            
-			//g.drawImage(goose, locX*PPI, locY*PPI, 5*PPI, 5*PPI, null);
+			g.drawImage(goose[d], locX*PPI-5*PPI, locY*PPI-5*PPI, 10*PPI, 10*PPI, null);
 			
 		}
 		
