@@ -1,4 +1,5 @@
 package tron;
+
 import javax.swing.*;
 
 import java.awt.*;
@@ -12,13 +13,11 @@ import java.net.*;
  * It has graphics
  * 
  * by Shaw Tan
- * Dec. 26 2014
+ * 12/09/2012
  */
 
 
 public class Client extends JFrame implements GC {
-	
-	
 
 	private int SELF;		//Which player this is
 	
@@ -76,7 +75,7 @@ public class Client extends JFrame implements GC {
 
 		//Window
 		this.setVisible(true);		
-		this.setSize(PPI*GC.GAME_WIDTH,PPI*GC.GAME_HEIGHT+this.getInsets().top+pMenu.getHeight());
+		this.setSize(PPI*GC.WIDTH,PPI*GC.HEIGHT+this.getInsets().top+pMenu.getHeight());
 
 		timer = new Timer(TICK, new TimerListener());
 		
@@ -110,28 +109,27 @@ public class Client extends JFrame implements GC {
 		}
 
 		loadImage();
-		
 
 		new Thread(new HandleInput()).start();
-		
+
 	}
 
 	private void newGame(){
 		//Initialize game
 		//(should be the same as what the server has)
 		locX[0] = 0+2;
-		locX[1] = GC.GAME_WIDTH-3;
-		locY[0] = GC.GAME_HEIGHT /2;
-		locY[1] = GC.GAME_HEIGHT /2;
+		locX[1] = GC.WIDTH-3;
+		locY[0] = GC.HEIGHT /2;
+		locY[1] = GC.HEIGHT /2;
 		dir[0] = EAST;
 		dir[1] = WEST;
-		grid = new byte[GC.GAME_WIDTH][GC.GAME_HEIGHT];
+		grid = new byte[GC.WIDTH][GC.HEIGHT];
 		repaint();
 		timer.start();
 		lblStatus.setText("Game started");
 		System.out.println("Starting game");
 	}
-	
+
 	private void loadImage(){
 		
 		bg = Toolkit.getDefaultToolkit().createImage("rsc/grass.jpg");
@@ -184,8 +182,8 @@ public class Client extends JFrame implements GC {
 						//The game grid is being sent
 //						grid = null;
 						
-						for (int i = 0; i < GC.GAME_WIDTH; i++) {
-							byte[] temp = new byte[GC.GAME_HEIGHT];
+						for (int i = 0; i < GC.WIDTH; i++) {
+							byte[] temp = new byte[GC.HEIGHT];
 							fromServer.readFully(temp);
 							//Copy the game grid
 							grid[i] = temp;
@@ -289,14 +287,12 @@ public class Client extends JFrame implements GC {
 		}
 
 		protected void paintComponent(Graphics g){
-			//For drawing the graphics
-
 			if (!timer.isRunning()){
 				return;
 			}
 			
 			//Start on a blank canvas
-			g.drawImage(bg, 0, 0, GAME_WIDTH*PPI, GAME_HEIGHT*PPI, null);
+			g.drawImage(bg, 0, 0, GC.WIDTH*PPI, GC.HEIGHT*PPI, null);
 			
 			try {
 				g.setColor(color[NUM_PLAYERS]);		//The color for dead blocks

@@ -1,4 +1,5 @@
 package tron;
+
 import java.awt.Color;
 
 /*
@@ -22,13 +23,13 @@ public interface GC {
 	final int NUM_PLAYERS = 2;		//Number of players
 	
 	//Game dimensions
-	final int GAME_WIDTH = 80;
-	final int GAME_HEIGHT = 60;
+	final int WIDTH = 80;
+	final int HEIGHT = 60;
 	
 	final int PPI = 8; 		//Pixel density
 	final int TICK = 100;	//Timer speed
 	
-	final int PORT = 8003;			//The network port the game uses
+	final int PORT = 8002;			//The network port the game uses
 	
 	//Colors for each player, and dead blocks
 	final Color[] color = {Color.BLUE, Color.RED, new Color(0xa95b26)};
